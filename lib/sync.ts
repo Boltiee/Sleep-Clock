@@ -43,6 +43,7 @@ export async function syncSettingsFromServer(
         profileId: data.profile_id,
         schedule: data.schedule_json,
         colors: data.colors_json,
+        colorTheme: data.color_theme || 'custom',
         dim: data.dim_json,
         choresEnabled: data.chores_enabled,
         chores: data.chores_json,
