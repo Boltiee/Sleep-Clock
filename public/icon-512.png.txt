@@ -1,0 +1,4 @@
+This is a placeholder for the 512x512 app icon.
+
+See icon-192.png.txt for generation instructions.
+

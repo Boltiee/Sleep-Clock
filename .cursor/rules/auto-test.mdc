@@ -1,0 +1,6 @@
+When you can test something on my behalf - do it.
+
+Where you need login credentials to be able to do the test, do it
+---
+alwaysApply: true
+---

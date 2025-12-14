@@ -1,0 +1,14 @@
+This is a placeholder for the 192x192 app icon.
+
+To generate proper icons, use a tool like:
+- https://realfavicongenerator.net/
+- https://www.pwabuilder.com/imageGenerator
+
+Suggested design:
+- Purple/blue gradient background (#7c3aed to #3b82f6)
+- White moon emoji or simple moon icon
+- Keep it simple and recognizable
+
+For now, you can use any 192x192 PNG image and name it icon-192.png
+Also create icon-512.png (512x512) with the same design.
+
