@@ -100,63 +100,65 @@ export default function ChoresFlow({
   }
 
   return (
-    <div className="space-y-6 max-w-4xl mx-auto">
-      {chores.map((chore) => {
-        const isDone = choresDone.includes(chore.id)
+    <div className="max-w-4xl mx-auto max-h-[70vh] overflow-y-auto smooth-scroll px-4">
+      <div className="space-y-6 pb-4">
+        {chores.map((chore) => {
+          const isDone = choresDone.includes(chore.id)
 
-        return (
-          <button
-            key={chore.id}
-            onClick={() => onChoreToggle(chore.id)}
-            className={`w-full flex items-center gap-6 p-8 rounded-3xl transition-all transform active:scale-95 ${
-              isDone
-                ? 'bg-green-500/90 shadow-lg'
-                : 'bg-white/90 hover:bg-white shadow-xl'
-            }`}
-          >
-            {/* Emoji */}
-            <div className="text-6xl">{chore.emoji || '✓'}</div>
-
-            {/* Text */}
-            <div className="flex-1 text-left">
-              <span
-                className={`text-4xl font-bold ${
-                  isDone ? 'text-white line-through' : 'text-gray-800'
-                }`}
-              >
-                {chore.text}
-              </span>
-            </div>
-
-            {/* Checkbox */}
-            <div
-              className={`w-16 h-16 rounded-full border-4 flex items-center justify-center ${
+          return (
+            <button
+              key={chore.id}
+              onClick={() => onChoreToggle(chore.id)}
+              className={`w-full flex items-center gap-6 p-8 rounded-3xl transition-all transform active:scale-95 ${
                 isDone
-                  ? 'bg-white border-white'
-                  : 'border-purple-600 bg-transparent'
+                  ? 'bg-green-500/90 shadow-lg'
+                  : 'bg-white/90 hover:bg-white shadow-xl'
               }`}
             >
-              {isDone && <span className="text-4xl text-green-500">✓</span>}
-            </div>
-          </button>
-        )
-      })}
+              {/* Emoji */}
+              <div className="text-6xl">{chore.emoji || '✓'}</div>
 
-      {/* Progress indicator */}
-      <div className="bg-white/90 rounded-2xl p-6 mt-8">
-        <div className="flex justify-between items-center mb-2">
-          <span className="text-2xl font-semibold text-gray-700">Progress</span>
-          <span className="text-2xl font-bold text-purple-700">
-            {choresDone.length} / {chores.length}
-          </span>
-        </div>
-        <div className="w-full bg-gray-300 rounded-full h-6 overflow-hidden">
-          <div
-            className="bg-gradient-to-r from-purple-600 to-pink-600 h-full transition-all duration-500"
-            style={{
-              width: `${(choresDone.length / chores.length) * 100}%`,
-            }}
-          />
+              {/* Text */}
+              <div className="flex-1 text-left">
+                <span
+                  className={`text-4xl font-bold ${
+                    isDone ? 'text-white line-through' : 'text-gray-800'
+                  }`}
+                >
+                  {chore.text}
+                </span>
+              </div>
+
+              {/* Checkbox */}
+              <div
+                className={`w-16 h-16 rounded-full border-4 flex items-center justify-center ${
+                  isDone
+                    ? 'bg-white border-white'
+                    : 'border-purple-600 bg-transparent'
+                }`}
+              >
+                {isDone && <span className="text-4xl text-green-500">✓</span>}
+              </div>
+            </button>
+          )
+        })}
+
+        {/* Progress indicator */}
+        <div className="bg-white/90 rounded-2xl p-6 mt-8">
+          <div className="flex justify-between items-center mb-2">
+            <span className="text-2xl font-semibold text-gray-700">Progress</span>
+            <span className="text-2xl font-bold text-purple-700">
+              {choresDone.length} / {chores.length}
+            </span>
+          </div>
+          <div className="w-full bg-gray-300 rounded-full h-6 overflow-hidden">
+            <div
+              className="bg-gradient-to-r from-purple-600 to-pink-600 h-full transition-all duration-500"
+              style={{
+                width: `${(choresDone.length / chores.length) * 100}%`,
+              }}
+            />
+          </div>
         </div>
       </div>
     </div>

@@ -7,10 +7,6 @@
     -webkit-tap-highlight-color: transparent;
   }
 
-  body {
-    @apply overflow-hidden;
-  }
-
   /* Prevent text selection on child-facing screens */
   .no-select {
     -webkit-user-select: none;
@@ -24,6 +20,12 @@
     width: 100vw;
     height: 100vh;
     overflow: hidden;
+  }
+
+  /* Smooth scrolling for iOS */
+  .smooth-scroll {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
   }
 }
 

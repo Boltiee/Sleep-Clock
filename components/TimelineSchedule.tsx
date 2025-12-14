@@ -13,6 +13,7 @@ export default function TimelineSchedule({ schedule, colors, onChange }: Timelin
   const timelineRef = useRef<HTMLDivElement>(null)
   const [dragging, setDragging] = useState<{ index: number; edge: 'start' | 'end' } | null>(null)
   const [hoveredBlock, setHoveredBlock] = useState<number | null>(null)
+  const [warningBlocks, setWarningBlocks] = useState<Set<number>>(new Set())
 
   // Convert HH:mm to minutes since midnight
   const timeToMinutes = (time: string): number => {
@@ -63,29 +64,70 @@ export default function TimelineSchedule({ schedule, colors, onChange }: Timelin
     return () => clearInterval(interval)
   }, [])
 
+  // Minimum duration in minutes
+  const MIN_DURATION_MINUTES = 30
+
+  // Check if a duration is valid (at least minimum)
+  const isValidDuration = (startTime: string, endTime: string): boolean => {
+    const duration = calculateDuration(startTime, endTime)
+    return duration >= MIN_DURATION_MINUTES / 60
+  }
+
   // Adjust adjacent blocks when one changes
   const adjustAdjacentBlocks = (index: number, newBlock: ScheduleBlock): ScheduleBlock[] => {
     const newSchedule = [...schedule]
+    const newWarnings = new Set<number>()
+    
+    // Check if the new block itself has valid duration
+    if (!isValidDuration(newBlock.startTime, newBlock.endTime)) {
+      // If current block would be too small, don't allow the change
+      newWarnings.add(index)
+      setWarningBlocks(newWarnings)
+      return schedule
+    }
+
     newSchedule[index] = newBlock
 
     // Adjust next block's start time to match this block's end time
     const nextIndex = (index + 1) % schedule.length
     if (nextIndex !== index) {
-      newSchedule[nextIndex] = {
+      const nextBlock = {
         ...newSchedule[nextIndex],
         startTime: newBlock.endTime,
       }
+      
+      // Check if next block would become too small
+      if (!isValidDuration(nextBlock.startTime, nextBlock.endTime)) {
+        // Don't allow the change if it would make next block too small
+        newWarnings.add(nextIndex)
+        setWarningBlocks(newWarnings)
+        return schedule
+      }
+      
+      newSchedule[nextIndex] = nextBlock
     }
 
     // Adjust previous block's end time to match this block's start time
     const prevIndex = (index - 1 + schedule.length) % schedule.length
     if (prevIndex !== index) {
-      newSchedule[prevIndex] = {
+      const prevBlock = {
         ...newSchedule[prevIndex],
         endTime: newBlock.startTime,
       }
+      
+      // Check if previous block would become too small
+      if (!isValidDuration(prevBlock.startTime, prevBlock.endTime)) {
+        // Don't allow the change if it would make previous block too small
+        newWarnings.add(prevIndex)
+        setWarningBlocks(newWarnings)
+        return schedule
+      }
+      
+      newSchedule[prevIndex] = prevBlock
     }
 
+    // Clear warnings if adjustment succeeded
+    setWarningBlocks(new Set())
     return newSchedule
   }
 
@@ -204,16 +246,41 @@ export default function TimelineSchedule({ schedule, colors, onChange }: Timelin
         
         {/* Hour markers */}
         <div className="relative h-8 text-xs text-gray-500">
-          {Array.from({ length: 25 }, (_, i) => (
-            <div
-              key={i}
-              className="absolute top-0 text-center"
-              style={{ left: `${(i / 24) * 100}%`, transform: 'translateX(-50%)' }}
-            >
-              <div className="w-px h-2 bg-gray-300 mx-auto mb-1" />
-              {i < 24 && `${i.toString().padStart(2, '0')}:00`}
-            </div>
-          ))}
+          {Array.from({ length: 25 }, (_, i) => {
+            // Responsive display: Show different intervals based on screen size
+            // Mobile (default): every 4 hours (0, 4, 8, 12, 16, 20)
+            // Tablet (md): every 3 hours
+            // Desktop (lg): every 2 hours
+            const showOnMobile = i % 4 === 0
+            const showOnTablet = i % 3 === 0
+            const showOnDesktop = i % 2 === 0
+            
+            return (
+              <div
+                key={i}
+                className="absolute top-0 text-center"
+                style={{ left: `${(i / 24) * 100}%`, transform: 'translateX(-50%)' }}
+              >
+                {/* Tick mark - always show */}
+                <div className="w-px h-2 bg-gray-300 mx-auto mb-1" />
+                
+                {/* Time label - responsive */}
+                {i < 24 && (
+                  <>
+                    <span className={`${showOnMobile ? 'block' : 'hidden'} md:hidden`}>
+                      {i.toString().padStart(2, '0')}:00
+                    </span>
+                    <span className={`hidden ${showOnTablet ? 'md:block' : 'md:hidden'} lg:hidden`}>
+                      {i.toString().padStart(2, '0')}:00
+                    </span>
+                    <span className={`hidden ${showOnDesktop ? 'lg:block' : 'lg:hidden'}`}>
+                      {i.toString().padStart(2, '0')}:00
+                    </span>
+                  </>
+                )}
+              </div>
+            )
+          })}
         </div>
 
         {/* Timeline with blocks */}
@@ -235,17 +302,20 @@ export default function TimelineSchedule({ schedule, colors, onChange }: Timelin
             const positions = getBlockPosition(block.startTime, block.endTime)
             const duration = calculateDuration(block.startTime, block.endTime)
             const display = getModeDisplay(block.mode)
+            const hasWarning = warningBlocks.has(index)
+            const isSmall = duration < 1
 
             return positions.map((pos, posIndex) => (
               <div
                 key={`${index}-${posIndex}`}
-                className={`absolute top-2 bottom-2 rounded transition-shadow ${
+                className={`absolute top-2 bottom-2 rounded transition-all ${
                   hoveredBlock === index ? 'shadow-lg ring-2 ring-white' : ''
-                }`}
+                } ${hasWarning ? 'ring-2 ring-amber-400 animate-pulse' : ''}`}
                 style={{
                   left: `${pos.left}%`,
                   width: `${pos.width}%`,
                   backgroundColor: colors[block.mode],
+                  opacity: isSmall ? 0.8 : 1,
                 }}
                 onMouseEnter={() => setHoveredBlock(index)}
                 onMouseLeave={() => setHoveredBlock(null)}
@@ -285,24 +355,43 @@ export default function TimelineSchedule({ schedule, colors, onChange }: Timelin
         </div>
       </div>
 
+      {/* Minimum duration notice */}
+      {warningBlocks.size > 0 && (
+        <div className="bg-amber-100 border border-amber-400 text-amber-800 px-4 py-3 rounded-lg">
+          <div className="flex items-center gap-2">
+            <span className="text-xl">⚠️</span>
+            <span className="font-medium">
+              Cannot adjust: blocks must be at least 30 minutes long
+            </span>
+          </div>
+        </div>
+      )}
+
       {/* Block details with quick adjust */}
       <div className="space-y-3">
         {schedule.map((block, index) => {
           const duration = calculateDuration(block.startTime, block.endTime)
           const display = getModeDisplay(block.mode)
+          const hasWarning = warningBlocks.has(index)
+          const isSmall = duration < 1 // Less than 1 hour
 
           return (
             <div
               key={index}
-              className="bg-white border-2 rounded-lg p-4 shadow-sm"
-              style={{ borderColor: colors[block.mode] }}
+              className={`bg-white border-2 rounded-lg p-4 shadow-sm ${
+                hasWarning ? 'ring-2 ring-amber-400 border-amber-400' : ''
+              }`}
+              style={{ borderColor: hasWarning ? '#fbbf24' : colors[block.mode] }}
             >
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-3">
                   <span className="text-4xl">{display.icon}</span>
                   <div>
                     <div className="font-bold text-lg">{display.title}</div>
-                    <div className="text-sm text-gray-600">{formatDuration(duration)}</div>
+                    <div className={`text-sm ${isSmall ? 'text-amber-600 font-semibold' : 'text-gray-600'}`}>
+                      {formatDuration(duration)}
+                      {isSmall && ' ⚠️'}
+                    </div>
                   </div>
                 </div>
                 <div

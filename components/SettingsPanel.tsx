@@ -132,7 +132,7 @@ export default function SettingsPanel({ settings, onSave, onClose }: SettingsPan
         )}
 
         {/* Content */}
-        <div className="flex-1 overflow-y-auto p-6">
+        <div className="flex-1 overflow-y-auto smooth-scroll p-4 md:p-6">
           {/* Schedule Tab */}
           {activeTab === 'schedule' && (
             <TimelineSchedule
