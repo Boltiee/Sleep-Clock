@@ -11,6 +11,7 @@ import {
   setMetadata,
   getMetadata,
 } from './storage'
+import * as Sentry from '@sentry/nextjs'
 
 // Sync settings from Supabase to local storage
 export async function syncSettingsFromServer(
@@ -29,6 +30,10 @@ export async function syncSettingsFromServer(
 
     if (error) {
       console.error('Error syncing settings from server:', error)
+      Sentry.captureException(error, {
+        tags: { operation: 'sync_settings_from_server' },
+        extra: { profileId }
+      })
       // Fall back to local storage
       return await getSettingsLocal(profileId)
     }
@@ -63,6 +68,10 @@ export async function syncSettingsFromServer(
     return null
   } catch (err) {
     console.error('Exception syncing settings:', err)
+    Sentry.captureException(err, {
+      tags: { operation: 'sync_settings_from_server_exception' },
+      extra: { profileId }
+    })
     return await getSettingsLocal(profileId)
   }
 }
@@ -96,6 +105,10 @@ export async function syncSettingsToServer(settings: Settings): Promise<void> {
 
     if (error) {
       console.error('Error syncing settings to server:', error)
+      Sentry.captureException(error, {
+        tags: { operation: 'sync_settings_to_server' },
+        extra: { profileId: settings.profileId }
+      })
     }
 
     // Always save locally
@@ -103,6 +116,10 @@ export async function syncSettingsToServer(settings: Settings): Promise<void> {
     await setMetadata('lastSyncTime', new Date().toISOString())
   } catch (err) {
     console.error('Exception syncing settings to server:', err)
+    Sentry.captureException(err, {
+      tags: { operation: 'sync_settings_to_server_exception' },
+      extra: { profileId: settings.profileId }
+    })
     await saveSettingsLocal(settings)
   }
 }

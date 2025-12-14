@@ -249,6 +249,15 @@ export default function SetupPage() {
             >
               {loading ? 'Please wait...' : authMode === 'signin' ? 'Sign In' : 'Sign Up'}
             </button>
+            {authMode === 'signin' && (
+              <button
+                type="button"
+                onClick={() => window.location.href = '/reset-password'}
+                className="w-full text-purple-600 underline text-sm"
+              >
+                Forgot Password?
+              </button>
+            )}
             <button
               onClick={() => setStep('mode')}
               className="w-full text-gray-600 underline"

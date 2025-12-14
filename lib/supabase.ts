@@ -68,3 +68,27 @@ export async function signInWithMagicLink(email: string) {
   return data
 }
 
+// Password reset request
+export async function resetPassword(email: string) {
+  if (!supabase) throw new Error('Supabase not configured')
+  
+  const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: `${window.location.origin}/reset-password`,
+  })
+  
+  if (error) throw error
+  return data
+}
+
+// Update password (after reset)
+export async function updatePassword(newPassword: string) {
+  if (!supabase) throw new Error('Supabase not configured')
+  
+  const { data, error } = await supabase.auth.updateUser({
+    password: newPassword,
+  })
+  
+  if (error) throw error
+  return data
+}
+

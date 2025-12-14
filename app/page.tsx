@@ -250,7 +250,7 @@ export default function HomePage() {
       />
 
       {/* Main mode screen */}
-      <div className="no-select fullscreen relative z-0">
+      <div className="no-select relative z-0 min-h-screen">
         <ModeScreen
           mode={currentMode}
           color={settings.colors[currentMode]}

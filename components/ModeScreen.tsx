@@ -30,12 +30,12 @@ export default function ModeScreen({
 
   return (
     <div
-      className="relative min-h-screen flex flex-col items-center justify-center p-8 transition-colors duration-1000"
+      className="relative min-h-screen flex flex-col items-center p-8 py-16 transition-colors duration-1000"
       style={{ backgroundColor: color }}
     >
       <DimOverlay opacity={dimOpacity} nightDimEnabled={nightDimEnabled} />
 
-      <div className="relative z-10 text-center max-w-4xl w-full">
+      <div className="relative z-10 text-center max-w-4xl w-full my-auto">
         {/* Icon */}
         <div className="text-9xl mb-8 animate-bounce-gentle">{display.icon}</div>
 

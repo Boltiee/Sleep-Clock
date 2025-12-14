@@ -100,7 +100,7 @@ export default function ChoresFlow({
   }
 
   return (
-    <div className="max-w-4xl mx-auto max-h-[70vh] overflow-y-auto smooth-scroll px-4">
+    <div className="max-w-4xl mx-auto px-4 py-8">
       <div className="space-y-6 pb-4">
         {chores.map((chore) => {
           const isDone = choresDone.includes(chore.id)

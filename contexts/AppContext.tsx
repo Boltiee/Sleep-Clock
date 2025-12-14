@@ -20,6 +20,7 @@ import {
 } from '@/lib/sync'
 import { getTodayDateString, getMetadata, setMetadata } from '@/lib/storage'
 import { isAudioPrimed, primeAudio } from '@/lib/audio'
+import * as Sentry from '@sentry/nextjs'
 
 interface AppContextType {
   currentMode: Mode
@@ -135,6 +136,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
           if (loadedProfile) {
             setProfileState(loadedProfile)
             
+            // Set Sentry user context
+            Sentry.setUser({
+              id: loadedProfile.id,
+              username: loadedProfile.name
+            })
+            
             // Load settings
             const loadedSettings = await syncSettingsFromServer(currentProfileId)
             if (loadedSettings) {
@@ -173,6 +180,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
         setAudioPrimed(isAudioPrimed())
       } catch (err) {
         console.error('Error loading data:', err)
+        Sentry.captureException(err, {
+          tags: { operation: 'load_initial_data' }
+        })
       }
     }
 
