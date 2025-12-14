@@ -140,6 +140,7 @@ export default function SetupPage() {
         profileId: currentProfileId,
         schedule: DEFAULT_SCHEDULE,
         colors: DEFAULT_COLORS,
+        colorTheme: 'watercolor',
         dim: DEFAULT_DIM,
         choresEnabled: true,
         chores: DEFAULT_CHORES,
