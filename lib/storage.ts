@@ -9,6 +9,7 @@ interface SleepClockDB extends DBSchema {
   dailyState: {
     key: string
     value: DailyState
+    indexes: { 'by-profile': string }
   }
   profiles: {
     key: string
@@ -31,9 +32,7 @@ async function getDB() {
           db.createObjectStore('settings', { keyPath: 'profileId' })
         }
         if (!db.objectStoreNames.contains('dailyState')) {
-          const dailyStateStore = db.createObjectStore('dailyState', { 
-            keyPath: ['profileId', 'date'] 
-          })
+          const dailyStateStore = db.createObjectStore('dailyState')
           dailyStateStore.createIndex('by-profile', 'profileId')
         }
         if (!db.objectStoreNames.contains('profiles')) {
@@ -68,7 +67,8 @@ export async function deleteSettingsLocal(profileId: string): Promise<void> {
 // Daily state storage
 export async function saveDailyStateLocal(dailyState: DailyState): Promise<void> {
   const db = await getDB()
-  await db.put('dailyState', dailyState)
+  const key = `${dailyState.profileId}:${dailyState.date}`
+  await db.put('dailyState', dailyState, key)
 }
 
 export async function getDailyStateLocal(
@@ -76,7 +76,8 @@ export async function getDailyStateLocal(
   date: string
 ): Promise<DailyState | null> {
   const db = await getDB()
-  const dailyState = await db.get('dailyState', [profileId, date])
+  const key = `${profileId}:${date}`
+  const dailyState = await db.get('dailyState', key)
   return dailyState || null
 }
 
@@ -95,7 +96,8 @@ export async function deleteDailyStateLocal(
   date: string
 ): Promise<void> {
   const db = await getDB()
-  await db.delete('dailyState', [profileId, date])
+  const key = `${profileId}:${date}`
+  await db.delete('dailyState', key)
 }
 
 // Profile storage
@@ -159,7 +161,8 @@ export async function cleanupOldDailyStates(profileId: string): Promise<void> {
   for (const state of states) {
     const stateDate = new Date(state.date)
     if (stateDate < thirtyDaysAgo) {
-      await tx.store.delete([profileId, state.date])
+      const key = `${profileId}:${state.date}`
+      await tx.store.delete(key)
     }
   }
   

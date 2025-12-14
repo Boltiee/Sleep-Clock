@@ -18,6 +18,7 @@ export default function HomePage() {
     dailyState,
     isLocked,
     audioPrimed,
+    enableAudio,
     updateDailyState,
     setSettings,
   } = useApp()
@@ -113,9 +114,7 @@ export default function HomePage() {
   }
 
   const handleAudioEnable = async () => {
-    const { enableAudio } = await import('@/contexts/AppContext')
-    const { primeAudio } = await import('@/lib/audio')
-    await primeAudio()
+    await enableAudio()
     setShowAudioPrompt(false)
   }
 

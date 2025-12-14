@@ -95,7 +95,7 @@ async function recordDemo() {
         document.body.appendChild(indicator);
         setTimeout(() => indicator.remove(), 600);
         
-        return originalClick.apply(this, arguments);
+        return originalClick.call(this);
       };
     });
 
@@ -150,7 +150,7 @@ async function recordDemo() {
         page.waitForSelector('input[placeholder*="PIN"]', { timeout: 8000 }),
         page.waitForSelector('text=Failed to create profile', { timeout: 8000 })
       ]);
-    } catch (e) {
+    } catch (e: any) {
       console.log('  - Waiting for profile creation...');
     }
     
@@ -191,7 +191,7 @@ async function recordDemo() {
       await pinInputs.nth(1).click();
       await pinInputs.nth(1).fill('1234');
       await page.waitForTimeout(1000);
-    } catch (e) {
+    } catch (e: any) {
       console.log('  - Error with PIN inputs:', e.message);
       await page.screenshot({ path: 'demos/debug-screenshot.png' });
       throw e;
@@ -217,12 +217,12 @@ async function recordDemo() {
       } else {
         console.log('  - No audio prompt shown');
       }
-    } catch (e) {
+    } catch (e: any) {
       console.log('  - Audio prompt handling failed, trying Skip');
       try {
         await page.click('text=Skip');
         await page.waitForTimeout(1500);
-      } catch (e2) {
+      } catch (e2: any) {
         console.log('  - No Skip button either, continuing');
       }
     }
