@@ -254,7 +254,7 @@ export default function HomePage() {
         <ModeScreen
           mode={currentMode}
           color={settings.colors[currentMode]}
-          dimOpacity={settings.dim[currentMode]}
+          dimOpacity={settings.dim.dimLevel}
           nightDimEnabled={settings.dim.nightDimEnabled}
           showClock={settings.showClock}
         >
