@@ -89,6 +89,7 @@ export async function syncSettingsToServer(settings: Settings): Promise<void> {
       profile_id: settings.profileId,
       schedule_json: settings.schedule,
       colors_json: settings.colors,
+      color_theme: settings.colorTheme || 'custom',
       dim_json: settings.dim,
       chores_enabled: settings.choresEnabled,
       chores_json: settings.chores,
