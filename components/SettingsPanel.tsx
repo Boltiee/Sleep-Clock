@@ -4,6 +4,8 @@ import { useState } from 'react'
 import { Settings, Chore, Tonie, ScheduleBlock, DEFAULT_COLORS } from '@/types'
 import { validateSchedule } from '@/lib/schedule'
 import TimelineSchedule from './TimelineSchedule'
+import { getAvailableThemes, getTheme, detectTheme, ThemeName } from '@/lib/color-themes'
+import { getEmojiSuggestions } from '@/lib/emoji-matcher'
 
 interface SettingsPanelProps {
   settings: Settings
@@ -15,6 +17,10 @@ export default function SettingsPanel({ settings, onSave, onClose }: SettingsPan
   const [localSettings, setLocalSettings] = useState<Settings>(settings)
   const [activeTab, setActiveTab] = useState<'schedule' | 'colors' | 'dim' | 'chores' | 'tonies' | 'sounds'>('schedule')
   const [errors, setErrors] = useState<string[]>([])
+  const [choreSuggestions, setChoreSuggestions] = useState<Record<number, string[]>>({})
+  const [choreSuggestionIndex, setChoreSuggestionIndex] = useState<Record<number, number>>({})
+  const [tonieSuggestions, setTonieSuggestions] = useState<Record<number, string[]>>({})
+  const [tonieSuggestionIndex, setTonieSuggestionIndex] = useState<Record<number, number>>({})
 
   const handleSave = () => {
     // Validate schedule
@@ -39,13 +45,23 @@ export default function SettingsPanel({ settings, onSave, onClose }: SettingsPan
     setLocalSettings({
       ...localSettings,
       colors: { ...localSettings.colors, [mode]: color },
+      colorTheme: 'custom', // Mark as custom when manually changing colors
     })
   }
 
-  const updateDim = (mode: keyof typeof localSettings.dim, value: number) => {
+  const applyColorTheme = (themeName: ThemeName) => {
+    const theme = getTheme(themeName)
     setLocalSettings({
       ...localSettings,
-      dim: { ...localSettings.dim, [mode]: value },
+      colors: theme.colors,
+      colorTheme: themeName,
+    })
+  }
+
+  const updateDimLevel = (value: number) => {
+    setLocalSettings({
+      ...localSettings,
+      dim: { ...localSettings.dim, dimLevel: value },
     })
   }
 
@@ -55,16 +71,44 @@ export default function SettingsPanel({ settings, onSave, onClose }: SettingsPan
       text: 'New chore',
       emoji: '✓',
     }
+    const newChores = [...localSettings.chores, newChore]
     setLocalSettings({
       ...localSettings,
-      chores: [...localSettings.chores, newChore],
+      chores: newChores,
     })
+    
+    // Generate initial suggestions
+    const suggestions = getEmojiSuggestions('New chore', 5)
+    setChoreSuggestions({ ...choreSuggestions, [newChores.length - 1]: suggestions })
+    setChoreSuggestionIndex({ ...choreSuggestionIndex, [newChores.length - 1]: 0 })
+  }
+
+  const generateChoreEmoji = (index: number) => {
+    const chore = localSettings.chores[index]
+    const suggestions = choreSuggestions[index] || getEmojiSuggestions(chore.text, 5)
+    const currentIndex = choreSuggestionIndex[index] || 0
+    const nextIndex = (currentIndex + 1) % suggestions.length
+    
+    setChoreSuggestions({ ...choreSuggestions, [index]: suggestions })
+    setChoreSuggestionIndex({ ...choreSuggestionIndex, [index]: nextIndex })
+    
+    updateChore(index, { emoji: suggestions[nextIndex] })
   }
 
   const updateChore = (index: number, updates: Partial<Chore>) => {
     const newChores = [...localSettings.chores]
     newChores[index] = { ...newChores[index], ...updates }
     setLocalSettings({ ...localSettings, chores: newChores })
+    
+    // Generate new suggestions if text changed
+    if (updates.text) {
+      const suggestions = getEmojiSuggestions(updates.text, 5)
+      setChoreSuggestions({ ...choreSuggestions, [index]: suggestions })
+      setChoreSuggestionIndex({ ...choreSuggestionIndex, [index]: 0 })
+      // Auto-apply first suggestion
+      newChores[index].emoji = suggestions[0]
+      setLocalSettings({ ...localSettings, chores: newChores })
+    }
   }
 
   const removeChore = (index: number) => {
@@ -78,16 +122,44 @@ export default function SettingsPanel({ settings, onSave, onClose }: SettingsPan
       name: 'New Tonie',
       emoji: '🎵',
     }
+    const newTonies = [...localSettings.tonieList, newTonie]
     setLocalSettings({
       ...localSettings,
-      tonieList: [...localSettings.tonieList, newTonie],
+      tonieList: newTonies,
     })
+    
+    // Generate initial suggestions
+    const suggestions = getEmojiSuggestions('New Tonie', 5)
+    setTonieSuggestions({ ...tonieSuggestions, [newTonies.length - 1]: suggestions })
+    setTonieSuggestionIndex({ ...tonieSuggestionIndex, [newTonies.length - 1]: 0 })
+  }
+
+  const generateTonieEmoji = (index: number) => {
+    const tonie = localSettings.tonieList[index]
+    const suggestions = tonieSuggestions[index] || getEmojiSuggestions(tonie.name, 5)
+    const currentIndex = tonieSuggestionIndex[index] || 0
+    const nextIndex = (currentIndex + 1) % suggestions.length
+    
+    setTonieSuggestions({ ...tonieSuggestions, [index]: suggestions })
+    setTonieSuggestionIndex({ ...tonieSuggestionIndex, [index]: nextIndex })
+    
+    updateTonie(index, { emoji: suggestions[nextIndex] })
   }
 
   const updateTonie = (index: number, updates: Partial<Tonie>) => {
     const newTonies = [...localSettings.tonieList]
     newTonies[index] = { ...newTonies[index], ...updates }
     setLocalSettings({ ...localSettings, tonieList: newTonies })
+    
+    // Generate new suggestions if name changed
+    if (updates.name) {
+      const suggestions = getEmojiSuggestions(updates.name, 5)
+      setTonieSuggestions({ ...tonieSuggestions, [index]: suggestions })
+      setTonieSuggestionIndex({ ...tonieSuggestionIndex, [index]: 0 })
+      // Auto-apply first suggestion
+      newTonies[index].emoji = suggestions[0]
+      setLocalSettings({ ...localSettings, tonieList: newTonies })
+    }
   }
 
   const removeTonie = (index: number) => {
@@ -99,7 +171,7 @@ export default function SettingsPanel({ settings, onSave, onClose }: SettingsPan
     <div className="fixed inset-0 bg-black/50 backdrop-blur z-50 flex items-center justify-center p-4">
       <div className="bg-white rounded-3xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
         {/* Header */}
-        <div className="bg-gradient-to-r from-purple-600 to-blue-600 text-white p-6">
+        <div className="bg-gradient-to-r from-[#6FB8B8] to-[#78B8D8] text-white p-6">
           <h2 className="text-3xl font-bold">Settings</h2>
         </div>
 
@@ -109,9 +181,9 @@ export default function SettingsPanel({ settings, onSave, onClose }: SettingsPan
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`px-4 py-2 rounded-lg font-semibold whitespace-nowrap ${
+              className={`px-4 py-3 rounded-lg font-semibold whitespace-nowrap flex items-center ${
                 activeTab === tab
-                  ? 'bg-purple-600 text-white'
+                  ? 'bg-[#6FB8B8] text-white'
                   : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
               }`}
             >
@@ -146,20 +218,77 @@ export default function SettingsPanel({ settings, onSave, onClose }: SettingsPan
 
           {/* Colors Tab */}
           {activeTab === 'colors' && (
-            <div className="space-y-4">
-              <h3 className="text-2xl font-bold mb-4">Mode Colors</h3>
-              {Object.entries(localSettings.colors).map(([mode, color]) => (
-                <div key={mode} className="flex items-center gap-4">
-                  <label className="w-40 font-medium">{mode.replace('_', ' ')}</label>
-                  <input
-                    type="color"
-                    value={color}
-                    onChange={(e) => updateColor(mode as any, e.target.value)}
-                    className="w-20 h-10 rounded cursor-pointer"
-                  />
-                  <span className="text-sm text-gray-600">{color}</span>
+            <div className="space-y-6">
+              <div>
+                <h3 className="text-2xl font-bold mb-4">Color Theme Presets</h3>
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 mb-6">
+                  {getAvailableThemes().map((theme) => {
+                    const isActive = localSettings.colorTheme === theme.name
+                    return (
+                      <button
+                        key={theme.name}
+                        onClick={() => applyColorTheme(theme.name)}
+                        className={`p-4 rounded-xl border-2 transition-all ${
+                          isActive
+                            ? 'border-blue-500 ring-2 ring-blue-200 shadow-md'
+                            : 'border-gray-300 hover:border-gray-400'
+                        }`}
+                      >
+                        <div className="flex gap-1 mb-2">
+                          {Object.values(theme.colors).map((color, i) => (
+                            <div
+                              key={i}
+                              className="flex-1 h-8 rounded"
+                              style={{ backgroundColor: color }}
+                            />
+                          ))}
+                        </div>
+                        <div className="font-semibold text-sm">{theme.displayName}</div>
+                        <div className="text-xs text-gray-600 mt-1">{theme.description}</div>
+                      </button>
+                    )
+                  })}
+                  <button
+                    onClick={() => setLocalSettings({ ...localSettings, colorTheme: 'custom' })}
+                    className={`p-4 rounded-xl border-2 transition-all ${
+                      localSettings.colorTheme === 'custom'
+                        ? 'border-blue-500 ring-2 ring-blue-200 shadow-md'
+                        : 'border-gray-300 hover:border-gray-400'
+                    }`}
+                  >
+                    <div className="flex gap-1 mb-2">
+                      {Object.values(localSettings.colors).map((color, i) => (
+                        <div
+                          key={i}
+                          className="flex-1 h-8 rounded"
+                          style={{ backgroundColor: color }}
+                        />
+                      ))}
+                    </div>
+                    <div className="font-semibold text-sm">Custom</div>
+                    <div className="text-xs text-gray-600 mt-1">Create your own</div>
+                  </button>
                 </div>
-              ))}
+              </div>
+
+              <div>
+                <h3 className="text-2xl font-bold mb-4">Custom Mode Colors</h3>
+                <p className="text-sm text-gray-600 mb-4">
+                  Adjust individual colors below. Changes will set theme to "Custom".
+                </p>
+                {Object.entries(localSettings.colors).map(([mode, color]) => (
+                  <div key={mode} className="flex items-center gap-4 mb-3">
+                    <label className="w-40 font-medium">{mode.replace('_', ' ')}</label>
+                    <input
+                      type="color"
+                      value={color}
+                      onChange={(e) => updateColor(mode as any, e.target.value)}
+                      className="w-20 h-10 rounded cursor-pointer"
+                    />
+                    <span className="text-sm text-gray-600">{color}</span>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
 
@@ -168,29 +297,32 @@ export default function SettingsPanel({ settings, onSave, onClose }: SettingsPan
             <div className="space-y-6">
               <h3 className="text-2xl font-bold mb-4">Brightness / Dim Overlay</h3>
               
-              {/* Per-mode dim sliders */}
-              {Object.entries(localSettings.dim).filter(([key]) => 
-                ['GET_READY', 'SLEEP', 'ALMOST_WAKE', 'WAKE'].includes(key)
-              ).map(([mode, value]) => (
-                <div key={mode}>
-                  <label className="block font-medium mb-2">
-                    {mode.replace('_', ' ')} Dim: {value}%
-                  </label>
-                  <input
-                    type="range"
-                    min="0"
-                    max="80"
-                    value={value}
-                    onChange={(e) => updateDim(mode as any, parseInt(e.target.value))}
-                    className="w-full"
-                  />
-                </div>
-              ))}
+              {/* Master dim slider */}
+              <div>
+                <label className="block font-medium mb-2">
+                  Screen Dim Level: {localSettings.dim.dimLevel}%
+                </label>
+                <input
+                  type="range"
+                  min="0"
+                  max="80"
+                  value={localSettings.dim.dimLevel}
+                  onChange={(e) => updateDimLevel(parseInt(e.target.value))}
+                  className="w-full h-3 rounded-lg appearance-none cursor-pointer"
+                  style={{
+                    background: `linear-gradient(to right, #A8D8B8 0%, #6B7F5E ${localSettings.dim.dimLevel * 1.25}%, #e5e7eb ${localSettings.dim.dimLevel * 1.25}%, #e5e7eb 100%)`
+                  }}
+                />
+                <p className="text-sm text-gray-600 mt-2">
+                  Applies the same dim level to all modes for consistency
+                </p>
+              </div>
 
               {/* Night dim toggle */}
-              <div className="flex items-center gap-3 mt-6">
+              <div className="flex items-center gap-3 mt-6 p-4 bg-gray-50 rounded-lg">
                 <input
                   type="checkbox"
+                  id="nightDim"
                   checked={localSettings.dim.nightDimEnabled}
                   onChange={(e) =>
                     setLocalSettings({
@@ -200,13 +332,16 @@ export default function SettingsPanel({ settings, onSave, onClose }: SettingsPan
                   }
                   className="w-6 h-6"
                 />
-                <label className="font-medium">Enable Night Dim (adds 20%)</label>
+                <label htmlFor="nightDim" className="font-medium flex-1 cursor-pointer">
+                  Enable Night Dim (adds 20% extra dimming)
+                </label>
               </div>
 
               {/* Auto-dim after routine */}
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-lg">
                 <input
                   type="checkbox"
+                  id="autoDim"
                   checked={localSettings.dim.autoDimAfterRoutine}
                   onChange={(e) =>
                     setLocalSettings({
@@ -216,7 +351,9 @@ export default function SettingsPanel({ settings, onSave, onClose }: SettingsPan
                   }
                   className="w-6 h-6"
                 />
-                <label className="font-medium">Auto-dim deeper after chores/books complete</label>
+                <label htmlFor="autoDim" className="font-medium flex-1 cursor-pointer">
+                  Auto-dim deeper after chores/books complete
+                </label>
               </div>
             </div>
           )}
@@ -260,36 +397,54 @@ export default function SettingsPanel({ settings, onSave, onClose }: SettingsPan
                     />
                   </div>
 
-                  {localSettings.chores.map((chore, index) => (
-                    <div key={chore.id} className="bg-gray-100 rounded-lg p-4">
-                      <div className="flex gap-4">
-                        <input
-                          type="text"
-                          value={chore.emoji}
-                          onChange={(e) => updateChore(index, { emoji: e.target.value })}
-                          className="w-16 px-2 py-2 border rounded text-center text-2xl"
-                          placeholder="emoji"
-                        />
-                        <input
-                          type="text"
-                          value={chore.text}
-                          onChange={(e) => updateChore(index, { text: e.target.value })}
-                          className="flex-1 px-4 py-2 border rounded-lg"
-                          placeholder="Chore description"
-                        />
-                        <button
-                          onClick={() => removeChore(index)}
-                          className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
-                        >
-                          Remove
-                        </button>
+                  {localSettings.chores.map((chore, index) => {
+                    const suggestions = choreSuggestions[index] || []
+                    const currentIndex = choreSuggestionIndex[index] || 0
+                    return (
+                      <div key={chore.id} className="bg-gray-100 rounded-lg p-4">
+                        <div className="flex gap-3 mb-2">
+                          <div className="relative">
+                            <input
+                              type="text"
+                              value={chore.emoji}
+                              onChange={(e) => updateChore(index, { emoji: e.target.value })}
+                              className="w-20 px-2 py-2 border rounded text-center text-2xl"
+                              placeholder="emoji"
+                            />
+                            {suggestions.length > 0 && (
+                              <div className="absolute -bottom-1 -right-1 bg-blue-500 text-white text-xs px-1.5 py-0.5 rounded-full">
+                                {currentIndex + 1}/{suggestions.length}
+                              </div>
+                            )}
+                          </div>
+                          <button
+                            onClick={() => generateChoreEmoji(index)}
+                            className="px-3 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-sm font-medium flex items-center gap-1"
+                            title="Generate emoji suggestion"
+                          >
+                            🔄
+                          </button>
+                          <input
+                            type="text"
+                            value={chore.text}
+                            onChange={(e) => updateChore(index, { text: e.target.value })}
+                            className="flex-1 px-4 py-2 border rounded-lg"
+                            placeholder="Chore description"
+                          />
+                          <button
+                            onClick={() => removeChore(index)}
+                            className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
+                          >
+                            Remove
+                          </button>
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    )
+                  })}
 
                   <button
                     onClick={addChore}
-                    className="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 rounded-lg"
+                    className="w-full bg-[#6FB8B8] hover:bg-[#5CA5A5] text-white font-semibold py-3 rounded-lg"
                   >
                     Add Chore
                   </button>
@@ -339,36 +494,54 @@ export default function SettingsPanel({ settings, onSave, onClose }: SettingsPan
                     />
                   </div>
 
-                  {localSettings.tonieList.map((tonie, index) => (
-                    <div key={tonie.id} className="bg-gray-100 rounded-lg p-4">
-                      <div className="flex gap-4">
-                        <input
-                          type="text"
-                          value={tonie.emoji}
-                          onChange={(e) => updateTonie(index, { emoji: e.target.value })}
-                          className="w-16 px-2 py-2 border rounded text-center text-2xl"
-                          placeholder="emoji"
-                        />
-                        <input
-                          type="text"
-                          value={tonie.name}
-                          onChange={(e) => updateTonie(index, { name: e.target.value })}
-                          className="flex-1 px-4 py-2 border rounded-lg"
-                          placeholder="Tonie name"
-                        />
-                        <button
-                          onClick={() => removeTonie(index)}
-                          className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
-                        >
-                          Remove
-                        </button>
+                  {localSettings.tonieList.map((tonie, index) => {
+                    const suggestions = tonieSuggestions[index] || []
+                    const currentIndex = tonieSuggestionIndex[index] || 0
+                    return (
+                      <div key={tonie.id} className="bg-gray-100 rounded-lg p-4">
+                        <div className="flex gap-3 mb-2">
+                          <div className="relative">
+                            <input
+                              type="text"
+                              value={tonie.emoji}
+                              onChange={(e) => updateTonie(index, { emoji: e.target.value })}
+                              className="w-20 px-2 py-2 border rounded text-center text-2xl"
+                              placeholder="emoji"
+                            />
+                            {suggestions.length > 0 && (
+                              <div className="absolute -bottom-1 -right-1 bg-blue-500 text-white text-xs px-1.5 py-0.5 rounded-full">
+                                {currentIndex + 1}/{suggestions.length}
+                              </div>
+                            )}
+                          </div>
+                          <button
+                            onClick={() => generateTonieEmoji(index)}
+                            className="px-3 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-sm font-medium flex items-center gap-1"
+                            title="Generate emoji suggestion"
+                          >
+                            🔄
+                          </button>
+                          <input
+                            type="text"
+                            value={tonie.name}
+                            onChange={(e) => updateTonie(index, { name: e.target.value })}
+                            className="flex-1 px-4 py-2 border rounded-lg"
+                            placeholder="Tonie name"
+                          />
+                          <button
+                            onClick={() => removeTonie(index)}
+                            className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
+                          >
+                            Remove
+                          </button>
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    )
+                  })}
 
                   <button
                     onClick={addTonie}
-                    className="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 rounded-lg"
+                    className="w-full bg-[#6FB8B8] hover:bg-[#5CA5A5] text-white font-semibold py-3 rounded-lg"
                   >
                     Add Tonie
                   </button>
@@ -446,7 +619,7 @@ export default function SettingsPanel({ settings, onSave, onClose }: SettingsPan
           </button>
           <button
             onClick={handleSave}
-            className="flex-1 bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 rounded-lg"
+            className="flex-1 bg-[#6FB8B8] hover:bg-[#5CA5A5] text-white font-semibold py-3 rounded-lg"
           >
             Save Changes
           </button>
