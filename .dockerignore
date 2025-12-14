@@ -1,0 +1,8 @@
+node_modules
+.next
+.git
+.cursor
+demos
+test-results
+*.log
+.DS_Store

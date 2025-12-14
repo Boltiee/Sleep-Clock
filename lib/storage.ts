@@ -25,16 +25,22 @@ let dbPromise: Promise<IDBPDatabase<SleepClockDB>> | null = null
 
 async function getDB() {
   if (!dbPromise) {
-    dbPromise = openDB<SleepClockDB>('sleep-clock-db', 1, {
-      upgrade(db) {
+    dbPromise = openDB<SleepClockDB>('sleep-clock-db', 2, {
+      upgrade(db, oldVersion) {
         // Create object stores
         if (!db.objectStoreNames.contains('settings')) {
           db.createObjectStore('settings', { keyPath: 'profileId' })
+        }
+        
+        // Recreate dailyState store if upgrading from version 1
+        if (oldVersion < 2 && db.objectStoreNames.contains('dailyState')) {
+          db.deleteObjectStore('dailyState')
         }
         if (!db.objectStoreNames.contains('dailyState')) {
           const dailyStateStore = db.createObjectStore('dailyState')
           dailyStateStore.createIndex('by-profile', 'profileId')
         }
+        
         if (!db.objectStoreNames.contains('profiles')) {
           db.createObjectStore('profiles', { keyPath: 'id' })
         }

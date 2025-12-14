@@ -81,14 +81,17 @@ export default function SetupPage() {
     setLoading(true)
 
     try {
-      const userId = selectedMode === 'local' ? 'local-user' : (await getCurrentUser())?.id
+      // Use local mode if Supabase is not configured OR if local mode is selected
+      const useLocalMode = isLocalMode || selectedMode === 'local'
+      const userId = useLocalMode ? 'local-user' : (await getCurrentUser())?.id
+      
       if (!userId) {
-        setError('User not found')
+        setError('User not found. Please sign in or use Local Mode.')
         setLoading(false)
         return
       }
 
-      const profile = await createProfile(userId, profileName, selectedMode === 'local')
+      const profile = await createProfile(userId, profileName, useLocalMode)
       if (!profile) {
         setError('Failed to create profile')
         setLoading(false)
