@@ -63,8 +63,9 @@ export default function HomePage() {
 
   if (!profile || !settings || !dailyState) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-900 to-blue-900">
-        <div className="text-white text-3xl font-semibold">Loading...</div>
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-purple-900 to-blue-900 gap-8">
+        <div className="text-[10rem] animate-bounce-gentle">⏰</div>
+        <div className="text-white text-5xl md:text-6xl font-black animate-pulse-gentle">Loading...</div>
       </div>
     )
   }
@@ -128,6 +129,7 @@ export default function HomePage() {
       return (
         <BookCounter
           booksCount={dailyState.booksCount}
+          childName={profile.name}
           onBookFinished={handleBookFinished}
           onAllBooksComplete={handleAllBooksComplete}
         />
@@ -145,6 +147,7 @@ export default function HomePage() {
           chores={settings.chores}
           choresDone={dailyState.choresDone}
           rewardText={settings.rewardText}
+          childName={profile.name}
           onChoreToggle={handleChoreToggle}
           onRewardClaimed={handleRewardClaimed}
         />
@@ -155,6 +158,7 @@ export default function HomePage() {
       return (
         <BookCounter
           booksCount={dailyState.booksCount}
+          childName={profile.name}
           onBookFinished={handleBookFinished}
           onAllBooksComplete={handleAllBooksComplete}
         />
@@ -179,26 +183,26 @@ export default function HomePage() {
 
   return (
     <>
-      {/* Audio prompt */}
+      {/* Audio prompt - CHILD FRIENDLY */}
       {showAudioPrompt && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[100] flex items-center justify-center p-8">
-          <div className="bg-white rounded-3xl p-12 max-w-md text-center shadow-2xl">
-            <div className="text-6xl mb-6">☀️</div>
-            <h2 className="text-3xl font-bold mb-4 text-gray-800">Enable Sounds?</h2>
-            <p className="text-gray-600 mb-8">
-              Tap to enable chimes and celebration sounds
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center p-6">
+          <div className="bg-white rounded-[3rem] p-12 md:p-16 max-w-2xl text-center shadow-2xl border-8 border-yellow-400">
+            <div className="text-[10rem] mb-8 animate-bounce-gentle">🔊</div>
+            <h2 className="text-5xl md:text-6xl font-black mb-8 text-gray-900">Turn on sounds?</h2>
+            <p className="text-3xl md:text-4xl text-gray-700 mb-12 font-bold">
+              Tap to hear fun sounds! 🎵
             </p>
             <button
               onClick={handleAudioEnable}
-              className="w-full bg-purple-600 hover:bg-purple-700 text-white text-2xl font-bold py-4 rounded-xl transition-colors"
+              className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white text-4xl md:text-5xl font-black py-10 rounded-3xl transition-all active:scale-95 shadow-2xl border-4 border-white"
             >
-              Enable Sounds
+              Yes! Turn On Sounds! 🎉
             </button>
             <button
               onClick={() => setShowAudioPrompt(false)}
-              className="w-full mt-4 text-gray-600 underline text-lg"
+              className="w-full mt-6 text-gray-600 underline text-2xl md:text-3xl font-bold"
             >
-              Skip
+              No thanks
             </button>
           </div>
         </div>
@@ -213,40 +217,14 @@ export default function HomePage() {
         />
       )}
 
-      {/* Visible settings button (top-right corner) */}
-      <button
-        onClick={() => setShowSettings(true)}
-        className="fixed top-6 right-6 z-30 bg-white/20 hover:bg-white/30 backdrop-blur-md text-white rounded-full p-4 shadow-lg transition-all hover:scale-110"
-        aria-label="Open Settings"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className="h-8 w-8"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          strokeWidth={2}
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
-          />
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-          />
-        </svg>
-      </button>
-
-      {/* Hidden settings trigger (bottom-left corner, long press) - kept for production use */}
+      {/* Hidden settings trigger (bottom-left corner, 3-second long press for parents) */}
       <div
-        className="fixed bottom-0 left-0 w-20 h-20 z-30"
+        className="fixed bottom-0 left-0 w-24 h-24 z-30"
         onMouseDown={handleMouseDown}
         onMouseUp={handleMouseUp}
         onTouchStart={handleMouseDown}
         onTouchEnd={handleMouseUp}
+        aria-label="Long press for parent settings"
       />
 
       {/* Main mode screen */}

@@ -139,23 +139,23 @@ export interface ModeDisplay {
 export const MODE_DISPLAYS: Record<Mode, ModeDisplay> = {
   GET_READY: {
     icon: '🌙',
-    title: 'Bedtime Jobs',
-    subtitle: 'Time to get ready for sleep',
+    title: 'Bedtime!',
+    subtitle: "Let's get ready for sleep",
   },
   SLEEP: {
     icon: '😴',
     title: 'Sleep Time',
-    subtitle: 'Good night, sweet dreams',
+    subtitle: 'Sweet dreams!',
   },
   ALMOST_WAKE: {
     icon: '🌅',
-    title: 'Almost Time',
-    subtitle: 'Nearly time to wake up',
+    title: 'Wake Up Soon!',
+    subtitle: 'Almost time to get up',
   },
   WAKE: {
     icon: '☀️',
     title: 'Good Morning!',
-    subtitle: 'Time to start the day',
+    subtitle: 'Time to play!',
   },
 }
 

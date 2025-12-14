@@ -30,28 +30,30 @@ export default function ModeScreen({
 
   return (
     <div
-      className="relative min-h-screen flex flex-col items-center p-8 py-16 transition-colors duration-1000"
+      className="relative min-h-screen flex flex-col items-center p-4 md:p-8 py-12 md:py-16 transition-colors duration-1000"
       style={{ backgroundColor: color }}
     >
       <DimOverlay opacity={dimOpacity} nightDimEnabled={nightDimEnabled} />
 
-      <div className="relative z-10 text-center max-w-4xl w-full my-auto">
-        {/* Icon */}
-        <div className="text-9xl mb-8 animate-bounce-gentle">{display.icon}</div>
+      <div className="relative z-10 text-center max-w-5xl w-full my-auto">
+        {/* Icon - BIGGER and more animated */}
+        <div className="text-[12rem] md:text-[16rem] mb-6 md:mb-8 animate-bounce-gentle drop-shadow-2xl">
+          {display.icon}
+        </div>
 
-        {/* Title */}
-        <h1 className="text-6xl md:text-8xl font-bold text-white mb-4 drop-shadow-lg">
+        {/* Title - BIGGER and more playful */}
+        <h1 className="text-7xl md:text-9xl lg:text-[10rem] font-black text-white mb-4 md:mb-6 drop-shadow-2xl animate-pulse-gentle">
           {display.title}
         </h1>
 
-        {/* Subtitle */}
-        <p className="text-3xl md:text-4xl text-white/90 mb-8">
+        {/* Subtitle - BIGGER and friendlier */}
+        <p className="text-4xl md:text-5xl lg:text-6xl text-white/95 mb-8 md:mb-12 font-bold drop-shadow-lg">
           {display.subtitle}
         </p>
 
         {/* Clock */}
         {showClock && (
-          <div className="text-5xl md:text-6xl font-mono text-white/80 mb-8">
+          <div className="text-6xl md:text-7xl font-mono text-white/80 mb-8 font-bold drop-shadow-lg">
             {timeString}
           </div>
         )}

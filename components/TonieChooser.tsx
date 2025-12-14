@@ -46,22 +46,22 @@ export default function TonieChooser({
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-8 bg-gradient-to-br from-purple-900 to-blue-900 overflow-y-auto smooth-scroll">
+    <div className="min-h-screen flex flex-col items-center justify-center p-6 md:p-8 bg-gradient-to-br from-purple-900 to-blue-900 overflow-y-auto smooth-scroll">
       <div className="max-w-6xl w-full">
-        {/* Title */}
-        <h1 className="text-6xl md:text-7xl font-bold text-center text-white mb-4">
-          Choose Your Tonie
+        {/* Title - BIGGER and friendlier */}
+        <h1 className="text-7xl md:text-8xl lg:text-9xl font-black text-center text-white mb-6 md:mb-8 drop-shadow-2xl animate-pulse-gentle">
+          Pick a Story! 📚
         </h1>
 
-        {/* Timer */}
+        {/* Timer - simpler language */}
         {duration > 0 && timeLeft > 0 && (
-          <p className="text-3xl text-center text-white/80 mb-8">
-            Auto-selecting in {timeLeft}s
+          <p className="text-4xl md:text-5xl text-center text-white/90 mb-8 md:mb-12 font-bold drop-shadow-lg">
+            Picking in {timeLeft}...
           </p>
         )}
 
-        {/* Tonie grid */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-8">
+        {/* Tonie grid - BIGGER cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10 mb-12">
           {tonies.map((tonie) => {
             const isLastUsed = tonie.id === lastTonieId
 
@@ -69,32 +69,32 @@ export default function TonieChooser({
               <button
                 key={tonie.id}
                 onClick={() => handleTonieClick(tonie.id)}
-                className={`relative bg-white/95 hover:bg-white rounded-3xl p-8 transition-all transform hover:scale-105 active:scale-95 shadow-xl ${
-                  isLastUsed ? 'ring-8 ring-yellow-400' : ''
+                className={`relative bg-white/95 hover:bg-white rounded-[2.5rem] p-10 md:p-12 transition-all transform hover:scale-105 active:scale-95 shadow-2xl border-8 ${
+                  isLastUsed ? 'border-yellow-400 ring-8 ring-yellow-300' : 'border-purple-400'
                 }`}
               >
-                {/* Last used badge */}
+                {/* Last used badge - BIGGER */}
                 {isLastUsed && (
-                  <div className="absolute -top-3 -right-3 bg-yellow-400 text-yellow-900 text-lg font-bold px-4 py-2 rounded-full shadow-lg">
-                    ⭐ Last
+                  <div className="absolute -top-5 -right-5 bg-yellow-400 text-yellow-900 text-2xl md:text-3xl font-black px-6 py-3 rounded-full shadow-2xl border-4 border-white animate-bounce-gentle">
+                    ⭐ Last Time
                   </div>
                 )}
 
-                {/* Tonie image/emoji */}
-                <div className="text-8xl mb-4 text-center">
+                {/* Tonie image/emoji - BIGGER */}
+                <div className="text-[8rem] md:text-[10rem] mb-6 text-center">
                   {tonie.imageUrl ? (
                     <img
                       src={tonie.imageUrl}
                       alt={tonie.name}
-                      className="w-full h-32 object-contain rounded-2xl"
+                      className="w-full h-40 md:h-48 object-contain rounded-2xl"
                     />
                   ) : (
                     tonie.emoji
                   )}
                 </div>
 
-                {/* Tonie name */}
-                <p className="text-2xl font-bold text-gray-800 text-center">
+                {/* Tonie name - BIGGER */}
+                <p className="text-4xl md:text-5xl font-black text-gray-900 text-center">
                   {tonie.name}
                 </p>
               </button>
@@ -102,14 +102,14 @@ export default function TonieChooser({
           })}
         </div>
 
-        {/* Skip button (parent only - could be hidden) */}
+        {/* Skip button - hidden for kids, smaller for parents */}
         {onSkip && (
-          <div className="text-center">
+          <div className="text-center opacity-30 hover:opacity-100 transition-opacity">
             <button
               onClick={onSkip}
-              className="bg-white/20 hover:bg-white/30 text-white text-xl font-semibold px-8 py-4 rounded-xl transition-colors"
+              className="bg-white/20 hover:bg-white/30 text-white text-base font-semibold px-6 py-2 rounded-lg transition-colors"
             >
-              Skip (Parent)
+              Skip
             </button>
           </div>
         )}
