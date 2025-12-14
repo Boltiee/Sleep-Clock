@@ -4,7 +4,7 @@ import Link from 'next/link'
 
 export default function InstructionsPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-900 to-blue-900 p-8">
+    <div className="min-h-screen bg-gradient-to-br from-[#4A8484] to-[#78B8D8] p-8">
       <div className="max-w-4xl mx-auto bg-white rounded-3xl shadow-2xl p-12">
         <h1 className="text-5xl font-bold text-center mb-8 text-gray-800">
           iPad Setup Instructions
@@ -13,7 +13,7 @@ export default function InstructionsPage() {
         <div className="space-y-8">
           {/* Add to Home Screen */}
           <section>
-            <h2 className="text-3xl font-bold mb-4 text-purple-700">
+            <h2 className="text-3xl font-bold mb-4" style={{ color: '#4A8484' }}>
               1. Add to Home Screen
             </h2>
             <ol className="list-decimal list-inside space-y-2 text-lg text-gray-700">
@@ -26,7 +26,7 @@ export default function InstructionsPage() {
 
           {/* Auto-Lock Never */}
           <section>
-            <h2 className="text-3xl font-bold mb-4 text-purple-700">
+            <h2 className="text-3xl font-bold mb-4" style={{ color: '#4A8484' }}>
               2. Disable Auto-Lock
             </h2>
             <ol className="list-decimal list-inside space-y-2 text-lg text-gray-700">
@@ -42,7 +42,7 @@ export default function InstructionsPage() {
 
           {/* Guided Access */}
           <section>
-            <h2 className="text-3xl font-bold mb-4 text-purple-700">
+            <h2 className="text-3xl font-bold mb-4" style={{ color: '#4A8484' }}>
               3. Enable Guided Access (Optional)
             </h2>
             <p className="text-lg text-gray-700 mb-4">
@@ -63,7 +63,7 @@ export default function InstructionsPage() {
 
           {/* Brightness */}
           <section>
-            <h2 className="text-3xl font-bold mb-4 text-purple-700">
+            <h2 className="text-3xl font-bold mb-4" style={{ color: '#4A8484' }}>
               4. Brightness & Night Mode
             </h2>
             <ul className="list-disc list-inside space-y-2 text-lg text-gray-700">
@@ -81,7 +81,7 @@ export default function InstructionsPage() {
 
           {/* Multi-device */}
           <section>
-            <h2 className="text-3xl font-bold mb-4 text-purple-700">
+            <h2 className="text-3xl font-bold mb-4" style={{ color: '#4A8484' }}>
               5. Parent Phone Access
             </h2>
             <ul className="list-disc list-inside space-y-2 text-lg text-gray-700">
@@ -94,7 +94,7 @@ export default function InstructionsPage() {
 
           {/* Troubleshooting */}
           <section>
-            <h2 className="text-3xl font-bold mb-4 text-purple-700">
+            <h2 className="text-3xl font-bold mb-4" style={{ color: '#4A8484' }}>
               Troubleshooting
             </h2>
             <ul className="list-disc list-inside space-y-2 text-lg text-gray-700">
@@ -117,7 +117,7 @@ export default function InstructionsPage() {
         <div className="mt-12 text-center">
           <Link
             href="/"
-            className="inline-block bg-purple-600 hover:bg-purple-700 text-white font-bold text-xl px-12 py-4 rounded-xl transition-colors"
+            className="inline-block bg-[#6FB8B8] hover:bg-[#5CA5A5] text-white font-bold text-xl px-12 py-4 rounded-xl transition-colors"
           >
             Back to App
           </Link>

@@ -46,7 +46,7 @@ export default function TonieChooser({
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-8 bg-gradient-to-br from-purple-900 to-blue-900 overflow-y-auto smooth-scroll">
+    <div className="min-h-screen flex flex-col items-center justify-center p-8 bg-gradient-to-br from-[#4A8484] to-[#78B8D8] overflow-y-auto smooth-scroll">
       <div className="max-w-6xl w-full">
         {/* Title */}
         <h1 className="text-6xl md:text-7xl font-bold text-center text-white mb-4">

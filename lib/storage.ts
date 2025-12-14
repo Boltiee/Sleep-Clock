@@ -25,7 +25,7 @@ let dbPromise: Promise<IDBPDatabase<SleepClockDB>> | null = null
 
 async function getDB() {
   if (!dbPromise) {
-    dbPromise = openDB<SleepClockDB>('sleep-clock-db', 2, {
+    dbPromise = openDB<SleepClockDB>('sleep-clock-db', 3, {
       upgrade(db, oldVersion) {
         // Create object stores
         if (!db.objectStoreNames.contains('settings')) {
@@ -53,6 +53,43 @@ async function getDB() {
   return dbPromise
 }
 
+/**
+ * Migrate settings from old DimConfig structure to new
+ */
+function migrateSettings(settings: any): Settings {
+  // Check if dim config needs migration (has per-mode values)
+  if (settings.dim && typeof settings.dim.GET_READY === 'number') {
+    // Old structure - migrate to new
+    const oldDim = settings.dim
+    const avgDim = Math.round((
+      (oldDim.GET_READY || 0) +
+      (oldDim.SLEEP || 40) +
+      (oldDim.ALMOST_WAKE || 20) +
+      (oldDim.WAKE || 0)
+    ) / 4)
+    
+    settings.dim = {
+      dimLevel: avgDim,
+      nightDimEnabled: oldDim.nightDimEnabled || false,
+      autoDimAfterRoutine: oldDim.autoDimAfterRoutine !== false,
+    }
+  }
+  
+  // Add colorTheme if missing (default to 'watercolor' for new, 'custom' for existing)
+  if (!settings.colorTheme) {
+    // If colors match default watercolor, use that theme
+    const isDefaultColors = 
+      settings.colors?.GET_READY === '#9FB8E8' &&
+      settings.colors?.SLEEP === '#C19EB8' &&
+      settings.colors?.ALMOST_WAKE === '#F4C896' &&
+      settings.colors?.WAKE === '#A8D8B8'
+    
+    settings.colorTheme = isDefaultColors ? 'watercolor' : 'custom'
+  }
+  
+  return settings as Settings
+}
+
 // Settings storage
 export async function saveSettingsLocal(settings: Settings): Promise<void> {
   const db = await getDB()
@@ -62,7 +99,17 @@ export async function saveSettingsLocal(settings: Settings): Promise<void> {
 export async function getSettingsLocal(profileId: string): Promise<Settings | null> {
   const db = await getDB()
   const settings = await db.get('settings', profileId)
-  return settings || null
+  if (!settings) return null
+  
+  // Migrate if needed
+  const migrated = migrateSettings(settings)
+  
+  // Save migrated version if changed
+  if (JSON.stringify(migrated) !== JSON.stringify(settings)) {
+    await db.put('settings', migrated)
+  }
+  
+  return migrated
 }
 
 export async function deleteSettingsLocal(profileId: string): Promise<void> {

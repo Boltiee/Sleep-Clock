@@ -78,7 +78,7 @@ function ResetPasswordContent() {
 
   if (isLocalMode && step === 'request') {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-900 to-blue-900 flex items-center justify-center p-8">
+      <div className="min-h-screen bg-gradient-to-br from-[#4A8484] to-[#78B8D8] flex items-center justify-center p-8">
         <div className="bg-white rounded-3xl shadow-2xl p-12 max-w-md w-full">
           <h1 className="text-4xl font-bold text-center mb-8 text-gray-800">
             Password Reset
@@ -88,7 +88,7 @@ function ResetPasswordContent() {
           </p>
           <button
             onClick={() => router.push('/')}
-            className="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-4 rounded-xl"
+            className="w-full bg-[#6FB8B8] hover:bg-[#5CA5A5] text-white font-bold py-4 rounded-xl"
           >
             Back to App
           </button>
@@ -98,7 +98,7 @@ function ResetPasswordContent() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-900 to-blue-900 flex items-center justify-center p-8">
+    <div className="min-h-screen bg-gradient-to-br from-[#4A8484] to-[#78B8D8] flex items-center justify-center p-8">
       <div className="bg-white rounded-3xl shadow-2xl p-12 max-w-md w-full">
         <h1 className="text-4xl font-bold text-center mb-8 text-gray-800">
           {step === 'request' ? 'Reset Password' : 'Update Password'}
@@ -132,7 +132,7 @@ function ResetPasswordContent() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-purple-600 hover:bg-purple-700 disabled:opacity-50 text-white font-bold py-4 rounded-xl"
+              className="w-full bg-[#6FB8B8] hover:bg-[#5CA5A5] disabled:opacity-50 text-white font-bold py-4 rounded-xl"
             >
               {loading ? 'Sending...' : 'Send Reset Link'}
             </button>
@@ -170,7 +170,7 @@ function ResetPasswordContent() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-purple-600 hover:bg-purple-700 disabled:opacity-50 text-white font-bold py-4 rounded-xl"
+              className="w-full bg-[#6FB8B8] hover:bg-[#5CA5A5] disabled:opacity-50 text-white font-bold py-4 rounded-xl"
             >
               {loading ? 'Updating...' : 'Update Password'}
             </button>
@@ -184,7 +184,7 @@ function ResetPasswordContent() {
 export default function ResetPasswordPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen bg-gradient-to-br from-purple-900 to-blue-900 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-[#4A8484] to-[#78B8D8] flex items-center justify-center">
         <div className="text-white text-2xl">Loading...</div>
       </div>
     }>

@@ -16,13 +16,10 @@ export interface ColorConfig {
   WAKE: string
 }
 
-// Dim overlay configuration (0-80% opacity per mode)
+// Dim overlay configuration (0-80% opacity for all modes)
 export interface DimConfig {
-  GET_READY: number
-  SLEEP: number
-  ALMOST_WAKE: number
-  WAKE: number
-  nightDimEnabled: boolean // Quick night dim toggle
+  dimLevel: number // Single dim level applied to all modes (0-80%)
+  nightDimEnabled: boolean // Quick night dim toggle (adds 20%)
   autoDimAfterRoutine: boolean // Auto-dim deeper after chores/books
 }
 
@@ -46,6 +43,7 @@ export interface Settings {
   profileId: string
   schedule: ScheduleBlock[]
   colors: ColorConfig
+  colorTheme: string // Theme name: 'watercolor', 'pastel', 'sunset', etc. or 'custom'
   dim: DimConfig
   choresEnabled: boolean
   chores: Chore[]
@@ -101,17 +99,14 @@ export const DEFAULT_SCHEDULE: ScheduleBlock[] = [
 ]
 
 export const DEFAULT_COLORS: ColorConfig = {
-  GET_READY: '#7c3aed', // purple
-  SLEEP: '#dc2626', // red
-  ALMOST_WAKE: '#f59e0b', // amber
-  WAKE: '#16a34a', // green
+  GET_READY: '#9FB8E8', // Soft periwinkle blue (watercolor theme)
+  SLEEP: '#C19EB8', // Muted mauve
+  ALMOST_WAKE: '#F4C896', // Soft peachy-yellow
+  WAKE: '#A8D8B8', // Soft sage green
 }
 
 export const DEFAULT_DIM: DimConfig = {
-  GET_READY: 0,
-  SLEEP: 40,
-  ALMOST_WAKE: 20,
-  WAKE: 0,
+  dimLevel: 40, // Single dim level for all modes
   nightDimEnabled: false,
   autoDimAfterRoutine: true,
 }

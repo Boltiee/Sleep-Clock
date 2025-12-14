@@ -167,7 +167,7 @@ export default function SetupPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-900 to-blue-900 flex items-center justify-center p-8">
+    <div className="min-h-screen bg-gradient-to-br from-[#4A8484] to-[#78B8D8] flex items-center justify-center p-8">
       <div className="bg-white rounded-3xl shadow-2xl p-12 max-w-md w-full">
         <h1 className="text-4xl font-bold text-center mb-8 text-gray-800">
           Setup
@@ -188,7 +188,7 @@ export default function SetupPage() {
             <button
               onClick={() => handleModeSelect('online')}
               disabled={isLocalMode}
-              className="w-full bg-purple-600 hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-4 rounded-xl transition-colors"
+              className="w-full bg-[#6FB8B8] hover:bg-[#5CA5A5] disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-4 rounded-xl transition-colors"
             >
               Online Mode (Multi-device sync)
             </button>
@@ -214,9 +214,10 @@ export default function SetupPage() {
                 onClick={() => setAuthMode('signin')}
                 className={`flex-1 py-2 rounded-lg font-semibold ${
                   authMode === 'signin'
-                    ? 'bg-purple-600 text-white'
+                    ? 'text-white'
                     : 'bg-gray-200 text-gray-700'
                 }`}
+                style={authMode === 'signin' ? { backgroundColor: '#6FB8B8' } : {}}
               >
                 Sign In
               </button>
@@ -224,9 +225,10 @@ export default function SetupPage() {
                 onClick={() => setAuthMode('signup')}
                 className={`flex-1 py-2 rounded-lg font-semibold ${
                   authMode === 'signup'
-                    ? 'bg-purple-600 text-white'
+                    ? 'text-white'
                     : 'bg-gray-200 text-gray-700'
                 }`}
+                style={authMode === 'signup' ? { backgroundColor: '#6FB8B8' } : {}}
               >
                 Sign Up
               </button>
@@ -257,7 +259,8 @@ export default function SetupPage() {
               <button
                 type="button"
                 onClick={() => window.location.href = '/reset-password'}
-                className="w-full text-purple-600 underline text-sm"
+                className="w-full underline text-sm"
+                style={{ color: '#6FB8B8' }}
               >
                 Forgot Password?
               </button>

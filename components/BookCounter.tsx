@@ -26,7 +26,7 @@ export default function BookCounter({
       <div className="animate-fade-in">
         <div className="bg-white/95 backdrop-blur rounded-3xl p-12 shadow-2xl max-w-2xl mx-auto">
           <div className="text-8xl text-center mb-6">😴</div>
-          <h2 className="text-5xl font-bold text-center text-purple-900 mb-8">
+          <h2 className="text-5xl font-bold text-center mb-8" style={{ color: '#4A8484' }}>
             Ready for Sleep!
           </h2>
           <p className="text-3xl text-center text-gray-700">
@@ -57,10 +57,10 @@ export default function BookCounter({
 
       {/* Counter */}
       <div className="bg-white/95 backdrop-blur rounded-3xl p-12 shadow-2xl text-center">
-        <h3 className="text-4xl font-bold text-purple-900 mb-6">
+        <h3 className="text-4xl font-bold mb-6" style={{ color: '#4A8484' }}>
           Books Read
         </h3>
-        <div className="text-9xl font-bold text-purple-600 mb-8">
+        <div className="text-9xl font-bold mb-8" style={{ color: '#6FB8B8' }}>
           {booksCount} / {totalBooks}
         </div>
 
@@ -68,7 +68,7 @@ export default function BookCounter({
         <button
           onClick={onBookFinished}
           disabled={booksCount >= totalBooks}
-          className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white text-4xl font-bold py-8 rounded-2xl transition-all active:scale-95 shadow-lg"
+          className="w-full bg-gradient-to-r from-[#6FB8B8] to-[#78B8D8] hover:from-[#5CA5A5] hover:to-[#6CA7C7] disabled:opacity-50 disabled:cursor-not-allowed text-white text-4xl font-bold py-8 rounded-2xl transition-all active:scale-95 shadow-lg"
         >
           Finished a Book! 📖
         </button>

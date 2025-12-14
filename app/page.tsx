@@ -63,7 +63,7 @@ export default function HomePage() {
 
   if (!profile || !settings || !dailyState) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-900 to-blue-900">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#4A8484] to-[#78B8D8]">
         <div className="text-white text-3xl font-semibold">Loading...</div>
       </div>
     )
@@ -190,7 +190,7 @@ export default function HomePage() {
             </p>
             <button
               onClick={handleAudioEnable}
-              className="w-full bg-purple-600 hover:bg-purple-700 text-white text-2xl font-bold py-4 rounded-xl transition-colors"
+              className="w-full bg-[#6FB8B8] hover:bg-[#5CA5A5] text-white text-2xl font-bold py-4 rounded-xl transition-colors"
             >
               Enable Sounds
             </button>

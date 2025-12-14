@@ -82,7 +82,7 @@ export default function ChoresFlow({
       <div className="animate-fade-in">
         <div className="bg-white/95 backdrop-blur rounded-3xl p-12 shadow-2xl max-w-2xl mx-auto">
           <div className="text-8xl text-center mb-6">🎉</div>
-          <h2 className="text-5xl font-bold text-center text-purple-900 mb-8">
+          <h2 className="text-5xl font-bold text-center mb-8" style={{ color: '#4A8484' }}>
             All Done!
           </h2>
           <p className="text-3xl text-center text-gray-700 mb-12">
@@ -90,7 +90,7 @@ export default function ChoresFlow({
           </p>
           <button
             onClick={handleClaimReward}
-            className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white text-4xl font-bold py-8 rounded-2xl transition-all active:scale-95 shadow-lg"
+            className="w-full bg-gradient-to-r from-[#6FB8B8] to-[#F4A8A8] hover:from-[#5CA5A5] hover:to-[#F19494] text-white text-4xl font-bold py-8 rounded-2xl transition-all active:scale-95 shadow-lg"
           >
             Claim Reward! 🎁
           </button>
@@ -111,7 +111,7 @@ export default function ChoresFlow({
               onClick={() => onChoreToggle(chore.id)}
               className={`w-full flex items-center gap-6 p-8 rounded-3xl transition-all transform active:scale-95 ${
                 isDone
-                  ? 'bg-green-500/90 shadow-lg'
+                  ? 'bg-[#B8D4B8]/90 shadow-lg'
                   : 'bg-white/90 hover:bg-white shadow-xl'
               }`}
             >
@@ -134,30 +134,31 @@ export default function ChoresFlow({
                 className={`w-16 h-16 rounded-full border-4 flex items-center justify-center ${
                   isDone
                     ? 'bg-white border-white'
-                    : 'border-purple-600 bg-transparent'
+                    : 'bg-transparent'
                 }`}
+                style={isDone ? {} : { borderColor: '#6FB8B8' }}
               >
-                {isDone && <span className="text-4xl text-green-500">✓</span>}
-              </div>
-            </button>
-          )
-        })}
+                {isDone && <span className="text-4xl" style={{ color: '#B8D4B8' }}>✓</span>}
+            </div>
+          </button>
+        )
+      })}
 
-        {/* Progress indicator */}
-        <div className="bg-white/90 rounded-2xl p-6 mt-8">
-          <div className="flex justify-between items-center mb-2">
-            <span className="text-2xl font-semibold text-gray-700">Progress</span>
-            <span className="text-2xl font-bold text-purple-700">
-              {choresDone.length} / {chores.length}
-            </span>
-          </div>
-          <div className="w-full bg-gray-300 rounded-full h-6 overflow-hidden">
-            <div
-              className="bg-gradient-to-r from-purple-600 to-pink-600 h-full transition-all duration-500"
-              style={{
-                width: `${(choresDone.length / chores.length) * 100}%`,
-              }}
-            />
+      {/* Progress indicator */}
+      <div className="bg-white/90 rounded-2xl p-6 mt-8">
+        <div className="flex justify-between items-center mb-2">
+          <span className="text-2xl font-semibold text-gray-700">Progress</span>
+          <span className="text-2xl font-bold" style={{ color: '#6FB8B8' }}>
+            {choresDone.length} / {chores.length}
+          </span>
+        </div>
+        <div className="w-full bg-gray-300 rounded-full h-6 overflow-hidden">
+          <div
+            className="bg-gradient-to-r from-[#6FB8B8] to-[#F4A8A8] h-full transition-all duration-500"
+            style={{
+              width: `${(choresDone.length / chores.length) * 100}%`,
+            }}
+          />
           </div>
         </div>
       </div>

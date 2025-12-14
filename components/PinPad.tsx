@@ -81,7 +81,7 @@ export default function PinPad({ onSuccess, onCancel, title, subtitle }: PinPadP
   const digits = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '', '0', '⌫']
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-purple-900 to-blue-900 p-8">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-[#4A8484] to-[#78B8D8] p-8">
       <div className="bg-white rounded-3xl shadow-2xl p-8 max-w-md w-full">
         <h1 className="text-3xl font-bold text-center mb-2 text-gray-800">
           {title || 'Enter PIN'}
@@ -97,9 +97,10 @@ export default function PinPad({ onSuccess, onCancel, title, subtitle }: PinPadP
               key={i}
               className={`w-4 h-4 rounded-full transition-all ${
                 i < pin.length
-                  ? 'bg-purple-600 scale-110'
+                  ? 'scale-110'
                   : 'bg-gray-300'
               }`}
+              style={i < pin.length ? { backgroundColor: '#6FB8B8' } : {}}
             />
           ))}
         </div>
@@ -136,7 +137,7 @@ export default function PinPad({ onSuccess, onCancel, title, subtitle }: PinPadP
                 key={index}
                 onClick={() => handleDigit(digit)}
                 disabled={isVerifying || pin.length >= 4}
-                className="bg-purple-600 hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed text-3xl font-bold text-white rounded-2xl h-16 transition-colors active:scale-95"
+                className="bg-[#6FB8B8] hover:bg-[#5CA5A5] disabled:opacity-50 disabled:cursor-not-allowed text-3xl font-bold text-white rounded-2xl h-16 transition-colors active:scale-95"
               >
                 {digit}
               </button>

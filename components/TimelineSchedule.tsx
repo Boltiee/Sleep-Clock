@@ -204,42 +204,6 @@ export default function TimelineSchedule({ schedule, colors, onChange }: Timelin
     <div className="space-y-6">
       <h3 className="text-2xl font-bold">Schedule Timeline</h3>
 
-      {/* Current time indicator */}
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-        <div className="flex items-center justify-between">
-          <span className="font-semibold text-blue-900">Current Mode Preview:</span>
-          <div className="flex items-center gap-2">
-            {schedule.map((block, index) => {
-              let start = timeToMinutes(block.startTime)
-              let end = timeToMinutes(block.endTime)
-              let current = currentTime
-              
-              let isActive = false
-              if (end < start) {
-                // Overnight block
-                isActive = current >= start || current < end
-              } else {
-                isActive = current >= start && current < end
-              }
-
-              if (isActive) {
-                const display = getModeDisplay(block.mode)
-                return (
-                  <div key={index} className="flex items-center gap-2 px-4 py-2 rounded-lg" style={{ backgroundColor: colors[block.mode] }}>
-                    <span className="text-3xl">{display.icon}</span>
-                    <div className="text-white">
-                      <div className="font-bold">{display.title}</div>
-                      <div className="text-sm opacity-90">{minutesToTime(currentTime)}</div>
-                    </div>
-                  </div>
-                )
-              }
-              return null
-            })}
-          </div>
-        </div>
-      </div>
-
       {/* Visual Timeline */}
       <div className="space-y-4">
         <div className="text-sm font-medium text-gray-600">Drag the edges to adjust times</div>
@@ -413,9 +377,15 @@ export default function TimelineSchedule({ schedule, colors, onChange }: Timelin
                     >
                       -15m
                     </button>
-                    <div className="flex-1 text-center font-mono text-lg font-bold">
-                      {block.startTime}
-                    </div>
+                    <input
+                      type="time"
+                      value={block.startTime}
+                      onChange={(e) => {
+                        const newBlock = { ...block, startTime: e.target.value }
+                        onChange(adjustAdjacentBlocks(index, newBlock))
+                      }}
+                      className="flex-1 text-center font-mono text-lg font-bold border-2 border-gray-300 rounded px-2 py-1 focus:border-blue-500 focus:outline-none"
+                    />
                     <button
                       onClick={() => quickAdjust(index, 'start', 15)}
                       className="px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded font-semibold text-sm"
@@ -435,9 +405,15 @@ export default function TimelineSchedule({ schedule, colors, onChange }: Timelin
                     >
                       -15m
                     </button>
-                    <div className="flex-1 text-center font-mono text-lg font-bold">
-                      {block.endTime}
-                    </div>
+                    <input
+                      type="time"
+                      value={block.endTime}
+                      onChange={(e) => {
+                        const newBlock = { ...block, endTime: e.target.value }
+                        onChange(adjustAdjacentBlocks(index, newBlock))
+                      }}
+                      className="flex-1 text-center font-mono text-lg font-bold border-2 border-gray-300 rounded px-2 py-1 focus:border-blue-500 focus:outline-none"
+                    />
                     <button
                       onClick={() => quickAdjust(index, 'end', 15)}
                       className="px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded font-semibold text-sm"

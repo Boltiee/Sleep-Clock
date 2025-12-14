@@ -412,14 +412,14 @@ export default function SettingsPanel({ settings, onSave, onClose }: SettingsPan
                               placeholder="emoji"
                             />
                             {suggestions.length > 0 && (
-                              <div className="absolute -bottom-1 -right-1 bg-blue-500 text-white text-xs px-1.5 py-0.5 rounded-full">
+                              <div className="absolute -bottom-1 -right-1 text-white text-xs px-1.5 py-0.5 rounded-full" style={{ backgroundColor: '#6FB8B8' }}>
                                 {currentIndex + 1}/{suggestions.length}
                               </div>
                             )}
                           </div>
                           <button
                             onClick={() => generateChoreEmoji(index)}
-                            className="px-3 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-sm font-medium flex items-center gap-1"
+                            className="px-3 py-2 bg-[#6FB8B8] hover:bg-[#5CA5A5] text-white rounded-lg text-sm font-medium flex items-center gap-1"
                             title="Generate emoji suggestion"
                           >
                             🔄
@@ -509,14 +509,14 @@ export default function SettingsPanel({ settings, onSave, onClose }: SettingsPan
                               placeholder="emoji"
                             />
                             {suggestions.length > 0 && (
-                              <div className="absolute -bottom-1 -right-1 bg-blue-500 text-white text-xs px-1.5 py-0.5 rounded-full">
+                              <div className="absolute -bottom-1 -right-1 text-white text-xs px-1.5 py-0.5 rounded-full" style={{ backgroundColor: '#6FB8B8' }}>
                                 {currentIndex + 1}/{suggestions.length}
                               </div>
                             )}
                           </div>
                           <button
                             onClick={() => generateTonieEmoji(index)}
-                            className="px-3 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-sm font-medium flex items-center gap-1"
+                            className="px-3 py-2 bg-[#6FB8B8] hover:bg-[#5CA5A5] text-white rounded-lg text-sm font-medium flex items-center gap-1"
                             title="Generate emoji suggestion"
                           >
                             🔄
